@@ -41,6 +41,7 @@ import codecs
 import csv
 import datetime
 import gettext
+import glob
 import os
 import re
 
@@ -198,13 +199,12 @@ def load_gettext_translations(directory: str, domain: str) -> None:
     global _supported_locales
     global _use_gettext
     _translations = {}
-    for lang in os.listdir(directory):
-        if lang.startswith("."):
-            continue  # skip .svn, etc
-        if os.path.isfile(os.path.join(directory, lang)):
-            continue
+
+    for filename in glob.glob(
+        os.path.join(directory, "*", "LC_MESSAGES", domain + ".mo")
+    ):
+        lang = os.path.basename(os.path.dirname(os.path.dirname(filename)))
         try:
-            os.stat(os.path.join(directory, lang, "LC_MESSAGES", domain + ".mo"))
             _translations[lang] = gettext.translation(
                 domain, directory, languages=[lang]
             )
@@ -268,7 +268,7 @@ class Locale(object):
 
     def __init__(self, code: str) -> None:
         self.code = code
-        self.name = LOCALE_NAMES.get(code, {}).get("name", u"Unknown")
+        self.name = LOCALE_NAMES.get(code, {}).get("name", "Unknown")
         self.rtl = False
         for prefix in ["fa", "ar", "he"]:
             if self.code.startswith(prefix):
@@ -406,7 +406,7 @@ class Locale(object):
             str_time = "%d:%02d" % (local_date.hour, local_date.minute)
         elif self.code == "zh_CN":
             str_time = "%s%d:%02d" % (
-                (u"\u4e0a\u5348", u"\u4e0b\u5348")[local_date.hour >= 12],
+                ("\u4e0a\u5348", "\u4e0b\u5348")[local_date.hour >= 12],
                 local_date.hour % 12 or 12,
                 local_date.minute,
             )
@@ -458,7 +458,7 @@ class Locale(object):
             return ""
         if len(parts) == 1:
             return parts[0]
-        comma = u" \u0648 " if self.code.startswith("fa") else u", "
+        comma = " \u0648 " if self.code.startswith("fa") else ", "
         return _("%(commas)s and %(last)s") % {
             "commas": comma.join(parts[:-1]),
             "last": parts[len(parts) - 1],

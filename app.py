@@ -11,20 +11,16 @@ num_items = dict(config.items('Qvzhi'))
 
 #显示算式
 def Displaynr():
+    #用来获取生成的算式，创建一个全局变量，方便外部调用
+    global nr 
     nr = bd.CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax = 9)
-    st.write(nr)
     return
 
 st.title = '口算生成器'
 
-with st.container():
-    st.markdown("### 计时口算")
-    st.markdown("##### 日期:_____年____月____日    姓名:_______________    用时:_____________    得分:___________")
-
-
 with st.sidebar:
     
-    totalNum = st.slider('算式数量', min_value=0, max_value=100, value=int(num_items['ss_number']), step=10, format=None)
+    totalNum = st.slider('算式数量', min_value=1, max_value=100, value=int(num_items['ss_number']), step=1, format=None)
     
     jiaBool = st.checkbox('加法', value=True)
     jia_col1, jia_col2 = st.columns(2)
@@ -75,8 +71,29 @@ with st.sidebar:
     with b_col1:
         saveCfg = st.button('保存设置')
     with b_col2:
-        create = st.button('生成算式', on_click = Displaynr())  #按钮事件，还没搞会，不知道怎么把内容显示在指定位置
+        create = st.button('生成算式', on_click = Displaynr())  #按钮事件
 
 
+with st.container():
+    st.markdown(" ### <center>计时口算</center>", unsafe_allow_html = True)
+    st.markdown(" ##### <center>日期\:\_\_\_\_年____月____日$~~~$姓名\:_\_\_\_\_\_\_\_\_ $~~~$用时\:_________ $~~~$得分\:\______</center>", unsafe_allow_html = True)
+    #st.write(nr)
+    #将算式按照预期布局输出
 
+    
+    col1, col2, col3, col4 = st.columns(4)
+    l = [col1, col2,col3,col4]
+    newlist = list(nr)
+
+    
+    i = 1
+    while i <= len(newlist):
+        for n in range(len(l)):
+            with l[n]:
+                if i <= len(newlist):
+                    st.markdown('#### '+newlist[i-1])
+                    #print(i)
+            i += 1
+
+        n = 0
 
