@@ -1,6 +1,10 @@
 import building as bd
 import streamlit as st
 import configparser
+import streamlit.components.v1 as components
+from streamlit_javascript import st_javascript
+
+
 
 
 #读取配置文件
@@ -20,7 +24,7 @@ st.title = '口算生成器'
 
 with st.sidebar:
     
-    totalNum = st.slider('算式数量', min_value=1, max_value=100, value=int(num_items['ss_number']), step=1, format=None)
+    totalNum = st.slider('#### 算式数量', min_value=10, max_value=150, value=int(num_items['ss_number']), step=10, format=None)
     
     jiaBool = st.checkbox('加法', value=True)
     jia_col1, jia_col2 = st.columns(2)
@@ -75,25 +79,52 @@ with st.sidebar:
 
 
 with st.container():
-    st.markdown(" ### <center>计时口算</center>", unsafe_allow_html = True)
-    st.markdown(" ##### <center>日期\:\_\_\_\_年____月____日$~~~$姓名\:_\_\_\_\_\_\_\_\_ $~~~$用时\:_________ $~~~$得分\:\______</center>", unsafe_allow_html = True)
-    #st.write(nr)
-    #将算式按照预期布局输出
+    def Html(suanshi):
 
-    
-    col1, col2, col3, col4 = st.columns(4)
-    l = [col1, col2,col3,col4]
-    newlist = list(nr)
-
-    
-    i = 1
-    while i <= len(newlist):
-        for n in range(len(l)):
-            with l[n]:
+        h = "<font size='5'>计时口算</font><br><font size='4'>日期:_____年___月___日&nbsp&nbsp姓名:__________&nbsp&nbsp用时:_________</font><table border='0' align='center' cellspacing='10' cellpadding='10'>"
+        h_end = "</table>"
+        tr = "<tr>"
+        tr_end = "</tr>"
+        
+        f = ""
+        newlist = list(suanshi)
+        i = 1
+        while i <= len(newlist):
+            s = ""
+            #n = 0
+            for n in range(4):
                 if i <= len(newlist):
-                    st.markdown('#### '+newlist[i-1])
-                    #print(i)
-            i += 1
+                    s += "<td>"+newlist[i-1]+"</td>"
+                if n == 3:
+                    s = tr + s + tr_end
 
-        n = 0
 
+                i += 1
+
+            f += s
+        return h + f + h_end
+    
+    suanshi = Html(nr)
+
+    #components.html(suanshi)
+
+    
+    print_js = """
+    function printer(){
+    var newWin = window.open('printer', '', '');
+    var xiaozhi = document.getElementById('123').innerHTML;
+    newWin.document.write(xiaozhi);
+    newWin.document.location.reload();
+    newWin.print();
+    newWin.close();
+    }
+    """
+
+    # Wrapt the javascript as html code
+    #内容不放在一起就找不到！
+    my_html = f"""<script>{print_js}</script>
+    <button onclick="printer()">打印</button>
+    <p id='123'>{suanshi}</p>
+    """
+    components.html(my_html, height = 600, scrolling=True)
+    
