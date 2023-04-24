@@ -2,7 +2,6 @@ import building as bd
 import streamlit as st
 import configparser
 import streamlit.components.v1 as components
-from streamlit_javascript import st_javascript
 
 
 
