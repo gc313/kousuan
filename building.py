@@ -52,9 +52,11 @@ def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chen
 	#先数出需要生成多少种算式，Bool值为真的要生成，否则不生成
 	list = [jiaBool, jianBool, chengBool, chuBool]
 	ssCount = list.count(True)
-	if ssCount == 0:
+	if ssCount != 0:
+		ssN = int(totalNum / ssCount)
+	else:
 		return set()
-	ssN = int(totalNum / ssCount)
+	
 	#要先定义空集合
 	jiaSet = set()
 	jianSet = set()
