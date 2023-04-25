@@ -48,7 +48,7 @@ with st.sidebar:
                 num_items = dict(config.items('SHUSHI'))
                 title = "竖式计算"
 
-            totalNum = st.slider('生成算式数量', min_value=8, max_value=100, value=int(num_items['ss_number']), step=4, format=None)
+            totalNum = st.slider('生成算式数量', min_value=6, max_value=100, value=int(num_items['ss_number']), step=2, format=None)
             
             jiaBool = st.checkbox('加法', value=True)
             jia_col1, jia_col2 = st.columns(2)
@@ -93,7 +93,7 @@ with st.sidebar:
             #行间距设置
             t_c_spacing = st.slider('间距', min_value=5, max_value=100, value=int(num_items['c_spacing']), step=5, format=None)
             t_r_spacing = st.slider('行距', min_value=5, max_value=100, value=int(num_items['r_spacing']), step=5, format=None)
-            t_g_num = st.slider('每行算式数量', min_value=3, max_value=5, value=4, step=1, format=None)
+            t_g_num = st.slider('每行算式数量', min_value=2, max_value=5, value=int(num_items['s_num']), step=1, format=None)
 
         create = st.form_submit_button('生成算式', type="primary", use_container_width = True)  
             
