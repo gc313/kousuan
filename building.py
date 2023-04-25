@@ -1,29 +1,5 @@
-import configparser
 import random
 
-"""
-#读取配置文件
-file = 'setting.ini'
-config = configparser.ConfigParser()
-config.read(file, encoding = 'utf-8')
-items = dict(config.items('Qvzhi'))
-
-jiaMin = int(items['jia_min'])      #加法算式取值最小数
-jiaMax = int(items['jia_max'])      #加法算式取值最大数
-
-jianMin = int(items['jian_min'])      #减法算式取值最小数
-jianMax = int(items['jian_max'])     #减法算式取值最大数
-
-chengMin = int(items['cheng_min'])     #乘法算式取值最小数
-chengMax = int(items['cheng_max'])     #乘法算式取值最大数
-
-beichuMin = int(items['beichu_min'])   #被除数取值最小数
-beichuMax = int(items['beichu_max'])   #被除数取值最大数
-chuMin = int(items['chu_min'])       #除数取值最小数
-chuMax = int(items['chu_max'])       #除数取值最大数
-yuShu = int(items['yu_shu'])        #是否有余数 0:没有   1：都有   2：随机
-deShuMax = int(items['deshu_max'])     #除法最大得数
-"""
 def Jia(Min, Max, N):
 	jiaSet = set()
 	for i in range(N):
@@ -32,8 +8,6 @@ def Jia(Min, Max, N):
 			jiaSet.add(suanshi)
 		i += 1
 	return jiaSet
-
-#print(Jia(jiaMin, jiaMax, 2)) #调试
 
 def Cheng(Min, Max, N):
 	chengSet = set()
@@ -44,9 +18,6 @@ def Cheng(Min, Max, N):
 		i += 1
 	return chengSet
 
-#print(Cheng(chengMin, chengMax, 2)) #调试
-
-
 def Jian(Min, Max, N):
 	jianSet = set()
 	for i in range(N):
@@ -56,9 +27,6 @@ def Jian(Min, Max, N):
 			jianSet.add(suanshi)
 		i += 1
 	return jianSet
-
-#print(Jian(jianMin, jianMax, 2)) #调试
-
 
 def Chu(bcMin, bcMax, cMin, cMax, yuShu, deShu, N):
 	chuSet = set()
@@ -79,9 +47,6 @@ def Chu(bcMin, bcMax, cMin, cMax, yuShu, deShu, N):
 			chuSet.add(suanshi)
 		i += 1
 	return chuSet
-
-#print(Chu(beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, 2)) #调试
-
 
 def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax):
 	#先数出需要生成多少种算式，Bool值为真的要生成，否则不生成

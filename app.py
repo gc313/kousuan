@@ -3,15 +3,13 @@ import streamlit as st
 import configparser
 import streamlit.components.v1 as components
 
-
-
-
 #读取配置文件
 file = 'setting.ini'
 config = configparser.ConfigParser()
 config.read(file, encoding = 'utf-8')
-num_items = dict(config.items('Qvzhi'))
+num_items = dict(config.items('Global'))
 
+st.set_page_config(page_title="小学生计时口算生成器",layout="wide")
 #显示算式
 def Displaynr():
     #用来获取生成的算式，创建一个全局变量，方便外部调用
@@ -19,11 +17,11 @@ def Displaynr():
     nr = bd.CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax = 9)
     return
 
-st.title = '口算生成器'
+
 
 with st.sidebar:
-    
-    totalNum = st.slider('#### 算式数量', min_value=10, max_value=150, value=int(num_items['ss_number']), step=10, format=None)
+    st.subheader("参数设置:alarm_clock:")
+    totalNum = st.slider('生成算式数量', min_value=10, max_value=150, value=int(num_items['ss_number']), step=10, format=None)
     
     jiaBool = st.checkbox('加法', value=True)
     jia_col1, jia_col2 = st.columns(2)
@@ -65,65 +63,63 @@ with st.sidebar:
     with chu_col4:
         chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=0, step=1, format='%d')
 
-    yuShuList = st.selectbox('是否生成带余数算式？', ('不要生成带余数算式', '总是生成带余数算式', '都可以'))
-    yuShudict = {'不要生成带余数算式':0, '总是生成带余数算式':1, '都可以':2}
+    yuShuList = st.selectbox('是否生成带余数算式？', ('随机产生带余数算式', '不要生成带余数算式', '总是生成带余数算式'))
+    yuShudict = {'随机产生带余数算式':0, '不要生成带余数算式':1, '总是生成带余数算式':2}
     yuShu = yuShudict[yuShuList]
 
 
     b_col1, b_col2 = st.columns(2)
     with b_col1:
-        saveCfg = st.button('保存设置')
+        st.button('保存设置', disabled=True)
     with b_col2:
-        create = st.button('生成算式', on_click = Displaynr())  #按钮事件
+        st.button('生成算式', on_click = Displaynr())  #按钮事件
 
 
 with st.container():
-    def Html(suanshi):
 
-        h = "<font size='5'>计时口算</font><br><font size='4'>日期:_____年___月___日&nbsp&nbsp姓名:__________&nbsp&nbsp用时:_________</font><table border='0' align='center' cellspacing='10' cellpadding='10'>"
-        h_end = "</table>"
+    def Html(suanshi):
+        #构建html语句，这部分是要打印出的内容
+        html_start = "<p align='center'><font size='5'>计时口算</font></p><p align='center'><font size='4'>_______年___月___日&nbsp&nbsp&nbsp&nbsp姓名:__________&nbsp&nbsp&nbsp&nbsp用时:_________</font></p><table border='0' align='center' cellspacing='10' cellpadding='10'>"
+        html_end = "</table>"
         tr = "<tr>"
         tr_end = "</tr>"
+        html_code = ""
         
-        f = ""
+        #将算式集合转换为列表
         newlist = list(suanshi)
         i = 1
         while i <= len(newlist):
             s = ""
-            #n = 0
+            #每行4个算式
             for n in range(4):
                 if i <= len(newlist):
                     s += "<td>"+newlist[i-1]+"</td>"
                 if n == 3:
                     s = tr + s + tr_end
-
-
                 i += 1
-
-            f += s
-        return h + f + h_end
+            html_code += s
+        return html_start + html_code + html_end
     
-    suanshi = Html(nr)
+    #Html语句放入变量
+    fin_suanshi = Html(nr)
 
-    #components.html(suanshi)
-
-    
+    #调出打印机的javascript代码
     print_js = """
     function printer(){
-    var newWin = window.open('printer', '', '');
-    var xiaozhi = document.getElementById('123').innerHTML;
-    newWin.document.write(xiaozhi);
-    newWin.document.location.reload();
-    newWin.print();
-    newWin.close();
+    var p_dlg = window.open('printer', '', '');
+    var get = document.getElementById('here').innerHTML;
+    p_dlg.document.write(get);
+    p_dlg.document.location.reload();
+    p_dlg.print();
+    p_dlg.close();
     }
     """
 
-    # Wrapt the javascript as html code
-    #内容不放在一起就找不到！
+    #把其他代码组合进来
+    #要打印的页面内容不和其他代码放在一起就找不到！
     my_html = f"""<script>{print_js}</script>
-    <button onclick="printer()">打印</button>
-    <p id='123'>{suanshi}</p>
+    <button onclick="printer()">打印算式</button>
+    <div id='here'>{fin_suanshi}</div>
     """
-    components.html(my_html, height = 600, scrolling=True)
+    components.html(my_html, height = 1080, scrolling=True)
     
