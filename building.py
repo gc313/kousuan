@@ -1,5 +1,5 @@
 '''
-Copyright (C) 2023
+Copyright (C) 2023 Email:gc313@foxmail.com
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
