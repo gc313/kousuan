@@ -19,6 +19,7 @@ import building as bd
 import streamlit as st
 import configparser
 import streamlit.components.v1 as components
+import math
 
 
 
@@ -91,8 +92,8 @@ with st.sidebar:
             yuShu = yuShudict[yuShuList]
         with tab2:
             #行间距设置
-            t_c_spacing = st.slider('间距', min_value=5, max_value=100, value=int(num_items['c_spacing']), step=5, format=None)
-            t_r_spacing = st.slider('行距', min_value=5, max_value=100, value=int(num_items['r_spacing']), step=5, format=None)
+            t_c_spacing = st.slider('间距', min_value=50, max_value=150, value=int(num_items['c_spacing']), step=5, format=None)
+            t_r_spacing = st.slider('行距', min_value=5, max_value=150, value=int(num_items['r_spacing']), step=5, format=None)
             t_g_num = st.slider('每行算式数量', min_value=2, max_value=5, value=int(num_items['s_num']), step=1, format=None)
 
         create = st.form_submit_button('生成算式', type="primary", use_container_width = True)  
@@ -103,31 +104,49 @@ with st.sidebar:
             global nr 
             nr = bd.CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deshu_max)
             return
-            
+
         def Html(suanshi):
             #构建html语句，这部分是要打印出的算式内容
-            tr = "<tr>"
-            tr_end = "</tr>"
+            """思路是先生成一个N列1行的表，每一列里面由上至下生成算式，每一个算式放
+            在单独的一个表里。
+            原因：之前用border-spacing控制表格间距时，上下左右都会同时变化变化，但
+            我只想变化水平间距和下间距。所以想到把每一行做成单独的表格，用border-spacing
+            的前一个参数控制水平间距，用margin-bottom控制下间距，但这有个问题，生成的算式
+            长短不一，所以每行形成的表格难以对齐，用现在的方法，每一个包含算式的小表格被放
+            在一个大表格的列里，默认就左对齐了。
+            """
+            td = "<td style='vertical-align:top'>"
+            td_end = "</td>"
             html_code = ""
                 
             #将算式集合转换为列表
-            newlist = list(suanshi)
+            e_list = list(suanshi)
+            #获取列表中算式个数
+            e_num = len(e_list)
             i = 1
-            while i <= len(newlist):
+            #循环至获取所有算式
+            while i <= e_num:
                 s = ""
-                #根据每行算式个数来生成表格
-                for n in range(t_g_num ):
-                    if i <= len(newlist):
-                        s += "<td>"+newlist[i-1]+"</td>"
-                    if n == t_g_num - 1:
-                        s = tr + s + tr_end
+                #根据算式总数除以设定的列数，得到需要生成多少行算式，除不尽的用math.ceil()向上取整
+                ss_row = math.ceil(e_num / t_g_num)
+                for n in range(ss_row):
+                    #再次判断是否获取所有元素?这里可以优化？？
+                    if i <= e_num:
+                        #每列里的每个算式单独生成一个表格
+                        s += f"<table align='center' style= 'border-collapse:separate;border-spacing:{t_c_spacing}px 0px;margin-bottom:{t_r_spacing}px'>"+e_list[i-1]+"</table>"
+                    #当生成每列所需数量的算式后，加上html的<td>标签，形成一列
+                    if n == ss_row - 1:
+                        s = td + s + td_end
                     i += 1
+                #把生成的一列算式html代码存入html_code
                 html_code += s
+
             return html_code
 
         #判断生成算式按钮是否被按下，并把Html语句放入变量
-        html_start = f"<p align='center'><font size='5'>{title}练习题</font></p><p align='center'><font size='4'>_______年___月___日&nbsp&nbsp&nbsp&nbsp姓名:__________&nbsp&nbsp&nbsp&nbsp用时:_________</font></p><table border='0' align='center' style='border-collapse:separate;border-spacing:{t_c_spacing}px {t_r_spacing}px'>"
+        html_start = f"<p align='center'><font size='5'>{title}练习题</font></p><p align='center'><font size='4'>_______年___月___日&nbsp&nbsp&nbsp&nbsp姓名:__________&nbsp&nbsp&nbsp&nbsp用时:_________</font></p><table align='center' border='0'>"
         html_end = "</table>"
+        #没创建算式时只显示标题
         fin_suanshi = html_start + html_end
         if create:
             Displaynr()
