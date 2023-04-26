@@ -98,13 +98,6 @@ with st.sidebar:
 
         create = st.form_submit_button('生成算式', type="primary", use_container_width = True)  
             
-            #按钮事件
-        def Displaynr():
-            #用来获取生成的算式，创建一个全局变量，方便外部调用
-            global nr 
-            nr = bd.CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deshu_max)
-            return
-
         def Html(suanshi):
             #构建html语句，这部分是要打印出的算式内容
             """思路是先生成一个N列1行的表，每一列里面由上至下生成算式，每一个算式放
@@ -148,12 +141,19 @@ with st.sidebar:
         html_end = "</table>"
         #没创建算式时只显示标题
         fin_suanshi = html_start + html_end
-        if create:
-            Displaynr()
-            fin_suanshi = html_start + Html(nr) + html_end
 
 
 with st.container():
+
+    #点击按钮
+    if create:
+        type_list = [jiaBool, jianBool, chengBool, chuBool]
+        true_num = type_list.count(True)
+        if true_num >0:
+            nr = bd.CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deshu_max, true_num)
+            fin_suanshi = html_start + Html(nr) + html_end
+        else:
+            st.warning("没有选择任何算式种类，不会生成任何算式！", icon="🚨")
 
     #调出打印机的javascript代码
     print_js = """

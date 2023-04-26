@@ -64,12 +64,10 @@ def Chu(bcMin, bcMax, cMin, cMax, yuShu, deShu, N):
 		i += 1
 	return chuSet
 
-def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax):
-	#先数出需要生成多少种算式，Bool值为真的要生成，否则不生成
-	list = [jiaBool, jianBool, chengBool, chuBool]
-	ssCount = list.count(True)
-	if ssCount != 0:
-		ssN = int(totalNum / ssCount)
+def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, trueNum):
+	#传入的trueNum指算式种类为真的数量，即需要生成多少种算式，为0则返回空集合，这里几种算式均匀生成
+	if trueNum != 0:
+		ssN = int(totalNum / trueNum)
 	else:
 		return set()
 	
