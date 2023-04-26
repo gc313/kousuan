@@ -1,2 +1,2 @@
-pyvenv
-__pycache__
+**/pyvenv
+**/__pycache__
