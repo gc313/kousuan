@@ -1,4 +1,5 @@
 '''
+v1.2.0
 Copyright (C) 2023 Email:gc313@foxmail.com
 
 This program is free software: you can redistribute it and/or modify
