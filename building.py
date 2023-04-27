@@ -1,5 +1,4 @@
 '''
-v1.2.0
 Copyright (C) 2023 Email:gc313@foxmail.com 
 
 This program is free software: you can redistribute it and/or modify
@@ -51,18 +50,19 @@ def Chu(bcMin, bcMax, cMin, cMax, yuShu, deShu, N):
 		while len(chuSet) < i + 1:
 			numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
 	
+			#还需要解决纯无余数算式量过大死循环的问题
 			if yuShu == 0:
-				while max(numbers) % min(numbers) != 0 or max(numbers) / min(numbers) >= deShu + 1:   #当得数不为整数并且得数大于所选得数范围时重新选数
+				while max(numbers) % min(numbers) != 0 or max(numbers) / min(numbers) >= deShu + 1:   #无余数算式，当得数不为整数并且得数大于所选得数范围时重新选数(如果只生成无余数算式，算式量过大会造成死循环，因为集合不能有重复元素，但是设定的取值范围找不到那个多符合要求的算式。)
 					numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
 			elif yuShu == 1:
-				while max(numbers) % min(numbers) == 0 or max(numbers) / min(numbers) >= deShu + 1:  #当得数为整数并且得数大于所选得数范围时重新选数
+				while max(numbers) % min(numbers) == 0 or max(numbers) / min(numbers) >= deShu + 1:  #有余数算式，当得数为整数并且得数大于所选得数范围时重新选数
 					numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
 			elif yuShu == 2:
-				while max(numbers) / min(numbers) >= deShu + 1:  #当得数大于所选得数范围时重新选数
+				while max(numbers) / min(numbers) >= deShu + 1:  #随机余数算式，当得数大于所选得数范围时重新选数
 					numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
 			suanshi = str(max(numbers))+" ÷ "+str(min(numbers))+" = ____  "
 			chuSet.add(suanshi)
-		i += 1
+
 	return chuSet
 
 def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, trueNum):
@@ -96,6 +96,6 @@ def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chen
 	return allSet
 
 #调试
-#s = CreateSS(100, True, 3, 49, True, 5, 99, True, 1, 9, True, 10, 89, 2, 9, 1, 9)
+#s = CreateSS(81, False, 3, 49, False, 5, 99, False, 1, 9, True, 10, 89, 2, 9, 0, 9, 1)
 #print(s) 
 #print(len(s))

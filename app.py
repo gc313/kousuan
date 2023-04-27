@@ -1,5 +1,4 @@
 '''
-v1.2.0
 Copyright (C) 2023 Email:gc313@foxmail.com
 
 This program is free software: you can redistribute it and/or modify
@@ -21,7 +20,6 @@ import streamlit as st
 import configparser
 import streamlit.components.v1 as components
 import math
-import requests
 
 
 
@@ -88,9 +86,10 @@ with st.sidebar:
                 with chu_col4:
                     chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=0, step=1, format='%d')
 
-                yuShuList = st.selectbox('是否生成带余数算式？', ('随机产生带余数算式', '不要生成带余数算式', '总是生成带余数算式'), index=2)
-                yuShudict = {'随机产生带余数算式':0, '不要生成带余数算式':1, '总是生成带余数算式':2}
-                yuShu = yuShudict[yuShuList]
+                yuShuList = st.selectbox('是否生成带余数算式？', ('不要生成带余数算式', '总是生成带余数算式', '随机产生带余数算式' ),index = 1)
+                yuShudict = {'不要生成带余数算式':0, '总是生成带余数算式':1, '随机产生带余数算式':2,}
+                yuShu = yuShudict[yuShuList]  
+        
         
         #竖式计算UI
         if option_v == 1:
@@ -136,9 +135,9 @@ with st.sidebar:
                 with chu_col4:
                     chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=0, step=1, format='%d')
 
-                yuShuList = st.selectbox('是否生成带余数算式？', ('随机产生带余数算式', '不要生成带余数算式', '总是生成带余数算式'), index=2)
-                yuShudict = {'随机产生带余数算式':0, '不要生成带余数算式':1, '总是生成带余数算式':2}
-                yuShu = yuShudict[yuShuList]        
+                yuShuList = st.selectbox('是否生成带余数算式？', ('不要生成带余数算式', '总是生成带余数算式', '随机产生带余数算式' ),index = 1)
+                yuShudict = {'不要生成带余数算式':0, '总是生成带余数算式':1, '随机产生带余数算式':2,}
+                yuShu = yuShudict[yuShuList]
         
         
         with tab2:
@@ -147,16 +146,8 @@ with st.sidebar:
             t_r_spacing = st.slider('行距', min_value=5, max_value=150, value=int(num_items['r_spacing']), step=5, format=None)
             t_g_num = st.slider('每行算式数量', min_value=2, max_value=5, value=int(num_items['s_num']), step=1, format=None)
 
-        create = st.form_submit_button('生成算式', type="primary", use_container_width = True)  
+        create = st.form_submit_button('生成算式', type="primary", use_container_width = True)
 
-        @st.cache_data    
-        def GetVersion():
-            res = requests.get("https://api.github.com/repos/gc313/kousuan/releases/latest")
-            try:
-                output = res.json()["tag_name"]
-            except KeyError:
-                output = "Unknow"
-            return output
 
         def Html(suanshi):
             #构建html语句，这部分是要打印出的算式内容
@@ -201,9 +192,9 @@ with st.sidebar:
         html_end = "</table>"
         #没创建算式时只显示标题
         fin_suanshi = html_start + html_end
-
     #获取版本信息
-    st.caption(GetVersion())
+    st.caption("v1.2.3")
+
 
 
 with st.container():
