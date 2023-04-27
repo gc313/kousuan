@@ -20,6 +20,7 @@ import streamlit as st
 import configparser
 import streamlit.components.v1 as components
 import math
+import requests
 
 
 
@@ -146,7 +147,16 @@ with st.sidebar:
             t_g_num = st.slider('每行算式数量', min_value=2, max_value=5, value=int(num_items['s_num']), step=1, format=None)
 
         create = st.form_submit_button('生成算式', type="primary", use_container_width = True)  
-            
+
+        @st.cache_data    
+        def GetVersion():
+            res = requests.get("https://api.github.com/repos/gc313/kousuan/releases/latest")
+            try:
+                output = res.jason()["name"]
+            except:
+                output = "Unknow"
+            return output
+
         def Html(suanshi):
             #构建html语句，这部分是要打印出的算式内容
             """思路是先生成一个N列1行的表，每一列里面由上至下生成算式，每一个算式放
@@ -190,6 +200,9 @@ with st.sidebar:
         html_end = "</table>"
         #没创建算式时只显示标题
         fin_suanshi = html_start + html_end
+
+    #获取版本信息
+    st.caption(GetVersion())
 
 
 with st.container():
