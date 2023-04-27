@@ -20,6 +20,7 @@ import streamlit as st
 import configparser
 import streamlit.components.v1 as components
 import math
+import random
 
 
 
@@ -82,9 +83,9 @@ with st.sidebar:
 
                 chu_col3, chu_col4 = st.columns(2)
                 with chu_col3:
-                    chuMin = st.number_input('除数最小取值', value= int(num_items['chu_min']), min_value=0, step=1, format='%d')
+                    chuMin = st.number_input('除数最小取值', value= int(num_items['chu_min']), min_value=1, step=1, format='%d')
                 with chu_col4:
-                    chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=0, step=1, format='%d')
+                    chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=1, step=1, format='%d')
 
                 yuShuList = st.selectbox('是否生成带余数算式？', ('不要生成带余数算式', '总是生成带余数算式', '随机产生带余数算式' ),index = 1)
                 yuShudict = {'不要生成带余数算式':0, '总是生成带余数算式':1, '随机产生带余数算式':2,}
@@ -131,9 +132,9 @@ with st.sidebar:
 
                 chu_col3, chu_col4 = st.columns(2)
                 with chu_col3:
-                    chuMin = st.number_input('除数最小取值', value= int(num_items['chu_min']), min_value=0, step=1, format='%d')
+                    chuMin = st.number_input('除数最小取值', value= int(num_items['chu_min']), min_value=1, step=1, format='%d')
                 with chu_col4:
-                    chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=0, step=1, format='%d')
+                    chuMax = st.number_input('除数最大取值', value= int(num_items['chu_max']), min_value=1, step=1, format='%d')
 
                 yuShuList = st.selectbox('是否生成带余数算式？', ('不要生成带余数算式', '总是生成带余数算式', '随机产生带余数算式' ),index = 1)
                 yuShudict = {'不要生成带余数算式':0, '总是生成带余数算式':1, '随机产生带余数算式':2,}
@@ -163,10 +164,8 @@ with st.sidebar:
             td_end = "</td>"
             html_code = ""
                 
-            #将算式集合转换为列表
-            e_list = list(suanshi)
             #获取列表中算式个数
-            e_num = len(e_list)
+            e_num = len(suanshi)
             i = 1
             #循环至获取所有算式
             while i <= e_num:
@@ -177,7 +176,7 @@ with st.sidebar:
                     #再次判断是否获取所有元素?这里可以优化？？
                     if i <= e_num:
                         #每列里的每个算式单独生成一个表格
-                        s += f"<table align='center' style= 'border-collapse:separate;border-spacing:{t_c_spacing}px 0px;margin-bottom:{t_r_spacing}px'>"+e_list[i-1]+"</table>"
+                        s += f"<table align='center' style= 'border-collapse:separate;border-spacing:{t_c_spacing}px 0px;margin-bottom:{t_r_spacing}px'>"+suanshi[i-1]+"</table>"
                     #当生成每列所需数量的算式后，加上html的<td>标签，形成一列
                     if n == ss_row - 1:
                         s = td + s + td_end
@@ -192,7 +191,8 @@ with st.sidebar:
         html_end = "</table>"
         #没创建算式时只显示标题
         fin_suanshi = html_start + html_end
-    #获取版本信息
+    
+    #版本信息（在线获取有时候太慢了）
     st.caption("v1.2.3")
 
 
