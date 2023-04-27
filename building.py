@@ -1,5 +1,4 @@
 '''
-v1.2.0
 Copyright (C) 2023 Email:gc313@foxmail.com 
 
 This program is free software: you can redistribute it and/or modify
@@ -16,86 +15,105 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 import random
+import streamlit as st
+#用列表不用集合，允许有重复算式出现。如果用集合，会在算式量大，而取值范围小的情况下造成死循环(没有那么多符合要求的算式，会一直生成重复的然后被取消掉)
+def TimeOut():
+	st.error("[除法]无法生成满足条件的算式，请检查参数设置是否合理!")
+
+	return
 
 def Jia(Min, Max, N):
-	jiaSet = set()
+	jiaList = []
 	for i in range(N):
-		while len(jiaSet) < i + 1:
+		while len(jiaList) < i + 1:
 			suanshi = str(random.randint(Min, Max))+" + "+str(random.randint(Min, Max))+" = ____ "
-			jiaSet.add(suanshi)
+			jiaList.append(suanshi)
 		i += 1
-	return jiaSet
+	return jiaList
 
 def Cheng(Min, Max, N):
-	chengSet = set()
+	chengList = []
 	for i in range(N):
-		while len(chengSet) < i + 1:
+		while len(chengList) < i + 1:
 			suanshi = str(random.randint(Min, Max))+" × "+str(random.randint(Min, Max))+" = ____  "
-			chengSet.add(suanshi)
+			chengList.append(suanshi)
 		i += 1
-	return chengSet
+	return chengList
 
 def Jian(Min, Max, N):
-	jianSet = set()
+	jianList = []
 	for i in range(N):
-		while len(jianSet) < i + 1:
+		while len(jianList) < i + 1:
 			numbers = random.sample(range(Min, Max), 2) #生成范围的两个整数
 			suanshi = str(max(numbers))+" - "+str(min(numbers))+" = ____  "
-			jianSet.add(suanshi)
+			jianList.append(suanshi)
 		i += 1
-	return jianSet
+	return jianList
 
 def Chu(bcMin, bcMax, cMin, cMax, yuShu, deShu, N):
-	chuSet = set()
+	chuList = []
 	for i in range(N):
-		while len(chuSet) < i + 1:
-			numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
-	
-			if yuShu == 0:
-				while max(numbers) % min(numbers) != 0 or max(numbers) / min(numbers) >= deShu + 1:   #当得数不为整数并且得数大于所选得数范围时重新选数
-					numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
-			elif yuShu == 1:
-				while max(numbers) % min(numbers) == 0 or max(numbers) / min(numbers) >= deShu + 1:  #当得数为整数并且得数大于所选得数范围时重新选数
-					numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
-			elif yuShu == 2:
-				while max(numbers) / min(numbers) >= deShu + 1:  #当得数大于所选得数范围时重新选数
-					numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
-			suanshi = str(max(numbers))+" ÷ "+str(min(numbers))+" = ____  "
-			chuSet.add(suanshi)
-		i += 1
-	return chuSet
+		try:
+			while len(chuList) < i + 1:
+				clc = 0
+				numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
+		
+				if yuShu == 0:
+					while max(numbers) % min(numbers) != 0 or max(numbers) / min(numbers) >= deShu + 1:   #无余数算式，当得数不为整数并且得数大于所选得数范围时重新选数
+						numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
+						clc += 1
+						if clc > 100:
+							break
+				elif yuShu == 1:
+					while max(numbers) % min(numbers) == 0 or max(numbers) / min(numbers) >= deShu + 1:  #有余数算式，当得数为整数并且得数大于所选得数范围时重新选数
+						numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
+						clc += 1
+						if clc > 100:
+							break
+				elif yuShu == 2:
+					while max(numbers) / min(numbers) >= deShu + 1:  #随机余数算式，当得数大于所选得数范围时重新选数
+						numbers = [random.randint(bcMin, bcMax), random.randint(cMin, cMax)]
+						clc += 1
+						if clc > 100:
+							break
+				if clc > 100:
+					break
+				suanshi = str(max(numbers))+" ÷ "+str(min(numbers))+" = ____  "
+				chuList.append(suanshi)
+			if clc > 100:
+				TimeOut()
+				break
+		except Exception as e:
+			st.error("[除法]无法生成满足条件的算式，请检查参数设置是否合理!"+str(e))
+			break
+
+	return chuList
 
 def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, trueNum):
-	#传入的trueNum指算式种类为真的数量，即需要生成多少种算式，为0则返回空集合，这里几种算式均匀生成
+	#传入的trueNum指算式种类为真的数量，即需要生成多少种算式，为0则返回空列表，这里几种算式均匀生成
 	if trueNum != 0:
 		ssN = int(totalNum / trueNum)
 	else:
-		return set()
+		return []
 	
-	#要先定义空集合
-	jiaSet = set()
-	jianSet = set()
-	jianSet = set()
-	chengSet = set()
-	chuSet = set()
-	allSet = set()
+	#要先定义空列表
+	allList = []
 
 	if jiaBool == True:
-		jiaSet = Jia(jiaMin, jiaMax, ssN)
-		allSet = allSet.union(jiaSet)
+		allList += Jia(jiaMin, jiaMax, ssN)
 	if jianBool == True:
-		jianSet = Jian(jianMin, jianMax, ssN)
-		allSet = allSet.union(jianSet)
+		allList += Jian(jianMin, jianMax, ssN)
 	if chengBool == True:
-		chengSet = Cheng(chengMin, chengMax, ssN)
-		allSet = allSet.union(chengSet)
+		allList += Cheng(chengMin, chengMax, ssN)
 	if chuBool == True:
-		chuSet = Chu(beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, ssN)
-		allSet = allSet.union(chuSet)
+		allList += Chu(beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, ssN)
 
-	return allSet
+	#列表随机排序
+	random.shuffle(allList)
+	
+	return allList
 
 #调试
-#s = CreateSS(100, True, 3, 49, True, 5, 99, True, 1, 9, True, 10, 89, 2, 9, 1, 9)
+#s = CreateSS(81, False, 3, 49, False, 5, 99, False, 1, 9, True, 10, 89, 2, 9, 0, 9, 1)
 #print(s) 
 #print(len(s))
