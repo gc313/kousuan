@@ -20,7 +20,7 @@ import streamlit as st
 import configparser
 import streamlit.components.v1 as components
 import math
-import random
+import requests
 
 
 
@@ -148,6 +148,15 @@ with st.sidebar:
             t_g_num = st.slider('每行算式数量', min_value=2, max_value=5, value=int(num_items['s_num']), step=1, format=None)
 
         create = st.form_submit_button('生成算式', type="primary", use_container_width = True)
+        #在线获取版本
+        @st.cache_data    
+        def GetVersion():
+            res = requests.get("https://api.github.com/repos/gc313/kousuan/releases/latest")
+            try:
+                output = res.jason()["tag_name"]
+            except:
+                output = "Unknow"
+            return output
 
 
         def Html(suanshi):
@@ -192,8 +201,8 @@ with st.sidebar:
         #没创建算式时只显示标题
         fin_suanshi = html_start + html_end
     
-    #版本信息（在线获取有时候太慢了）
-    st.caption("v1.2.3")
+    #版本信息
+    st.caption(GetVersion())
 
 
 
