@@ -153,7 +153,7 @@ with st.sidebar:
         def GetVersion():
             res = requests.get("https://api.github.com/repos/gc313/kousuan/releases/latest")
             try:
-                output = res.jason()["tag_name"]
+                output = res.json()["tag_name"]
             except:
                 output = "Unknow"
             return output
