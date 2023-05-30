@@ -24,10 +24,10 @@ import requests
 
 
 
-st.set_page_config(page_title="小学生数学练习题生成器",layout="wide")
+st.set_page_config(page_title="小学生数学练习题生成器",layout="wide",page_icon="💯")
 
 with st.sidebar:
-    st.subheader("设置:alarm_clock:")
+    st.subheader("🏮练习题生成参数设置🏮")
     
     #算式种类选择
     option = st.selectbox("选择算式种类", ('计时口算','竖式计算'))

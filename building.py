@@ -89,10 +89,25 @@ def Chu(bcMin, bcMax, cMin, cMax, yuShu, deShu, N):
 
 	return chuList
 
+#将需要生成的算式数量分配至每个算式种类里，并且考虑不能整除的情况
+def SplitNum(totalNum, trueNum):
+	numList = []
+	n = totalNum // trueNum
+	y = totalNum % trueNum
+
+	for i in range(trueNum):
+		numList.append(n)
+	
+	#不能整除时，把余数依次加到列表的元素中
+	if y > 0:
+		for k in range(y):
+			numList[k] += 1
+	return numList
+
 def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chengBool, chengMin, chengMax, chuBool, beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, trueNum):
-	#传入的trueNum指算式种类为真的数量，即需要生成多少种算式，为0则返回空列表，这里几种算式均匀生成
+	#传入的trueNum指算式种类为真的数量，即需要生成多少种算式，为0则返回空列表
 	if trueNum != 0:
-		ssN = int(totalNum / trueNum)
+		ssN = SplitNum(totalNum, trueNum)
 	else:
 		return []
 	
@@ -100,13 +115,13 @@ def CreateSS(totalNum, jiaBool, jiaMin, jiaMax, jianBool, jianMin, jianMax, chen
 	allList = []
 
 	if jiaBool == True:
-		allList += Jia(jiaMin, jiaMax, ssN)
+		allList += Jia(jiaMin, jiaMax, ssN.pop())
 	if jianBool == True:
-		allList += Jian(jianMin, jianMax, ssN)
+		allList += Jian(jianMin, jianMax, ssN.pop())
 	if chengBool == True:
-		allList += Cheng(chengMin, chengMax, ssN)
+		allList += Cheng(chengMin, chengMax, ssN.pop())
 	if chuBool == True:
-		allList += Chu(beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, ssN)
+		allList += Chu(beichuMin, beichuMax, chuMin, chuMax, yuShu, deShuMax, ssN.pop())
 
 	#列表随机排序
 	random.shuffle(allList)
